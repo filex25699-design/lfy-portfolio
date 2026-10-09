@@ -1,0 +1,244 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { creativeFeatures, creativeGallery } from '@/data/creative';
+
+const filmItems = [...creativeGallery, ...creativeGallery];
+---
+
+<BaseLayout title="兴趣与创作" description="逢源诗集、网易云音乐人、书法、羽毛球与个人创作展示。">
+  <section class="page-shell grid gap-8 py-12 md:py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-10">
+    <div>
+      <p class="eyebrow">Creative</p>
+      <h1 class="section-title mt-3">兴趣与创作</h1>
+      <p class="mt-5 max-w-3xl text-base text-ink-600 sm:text-lg">
+        用诗歌、音乐、书法和运动补充职业作品之外的个人表达。这里不是简历主线，但能呈现审美、文案能力、长期练习和真实生活状态。
+      </p>
+    </div>
+    <div class="glass-panel rounded-lg p-5">
+      <p class="text-sm font-semibold text-accent-600">LFY Creator Map</p>
+      <p class="mt-3 text-xl font-bold leading-tight sm:text-2xl">文字表达、听觉创作、书写练习和运动节奏，共同构成个人品牌的另一面。</p>
+    </div>
+  </section>
+
+  <section class="film-wrap pb-16">
+    <div class="page-shell pb-6">
+      <p class="eyebrow">Gallery</p>
+      <h2 class="mt-3 text-3xl font-bold">胶片展映</h2>
+      <p class="mt-3 max-w-2xl text-ink-600">以持续滚动的胶片节奏，串联书法、诗歌、音乐与运动记录。</p>
+    </div>
+
+    <div class="film-stage" data-cursor-interactive>
+      <div class="film-track" aria-label="兴趣创作素材胶片滚动展示">
+        {
+          filmItems.map((item, index) => (
+            <figure class="film-frame">
+              <img src={item.src} alt={item.alt} loading={index < 4 ? 'eager' : 'lazy'} />
+              <figcaption>
+                <span>{item.category}</span>
+                <strong>{item.caption}</strong>
+              </figcaption>
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="page-shell grid gap-4 pb-16 md:grid-cols-2 lg:grid-cols-4">
+    {
+      creativeFeatures.map((feature) => (
+        <article class="card group overflow-hidden" data-cursor-interactive>
+          <div class="aspect-[4/3] overflow-hidden bg-ink-50">
+            <img
+              src={feature.image}
+              alt={`${feature.title}预览图`}
+              class="h-full w-full object-cover transition duration-300 group-hover:scale-[1.04]"
+              loading="lazy"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="p-5">
+            <span class="tag">{feature.label}</span>
+            <h2 class="mt-4 text-xl font-bold">{feature.title}</h2>
+            <p class="mt-3 text-sm text-ink-600">{feature.description}</p>
+            {feature.href ? (
+              <a class="mt-5 inline-flex text-sm font-bold text-accent-600" href={feature.href} target="_blank" rel="noreferrer">
+                {feature.cta}
+              </a>
+            ) : (
+              <span class="mt-5 inline-flex text-sm font-bold text-accent-600">{feature.cta}</span>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="page-shell pb-16">
+    <div class="rounded-lg border border-black/10 bg-white/75 p-5">
+      <h2 class="text-xl font-bold">后续可扩展</h2>
+      <p class="mt-3 text-sm text-ink-600">
+        可继续增加网易云作品精选、诗集阅读页、书法分类、运动记录、文章详情页和自媒体聚合入口。所有入口建议继续走数据配置，便于你自己长期维护。
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .film-wrap {
+    overflow: hidden;
+  }
+
+  .film-stage {
+    position: relative;
+    margin-inline: auto;
+    width: min(100%, 1440px);
+    overflow: hidden;
+    border-block: 18px solid #171717;
+    background:
+      linear-gradient(90deg, #171717 0 12px, transparent 12px calc(100% - 12px), #171717 calc(100% - 12px)),
+      #262626;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 24px 70px rgba(16, 17, 20, 0.16);
+  }
+
+  .film-stage::before,
+  .film-stage::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    height: 18px;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 18px, rgba(255, 255, 255, 0.82) 18px 30px, transparent 30px 48px),
+      #171717;
+  }
+
+  .film-stage::before {
+    top: 0;
+  }
+
+  .film-stage::after {
+    bottom: 0;
+  }
+
+  .film-track {
+    display: flex;
+    width: max-content;
+    gap: 18px;
+    padding: 44px 18px;
+    animation: film-roll 58s linear infinite;
+  }
+
+  .film-frame {
+    position: relative;
+    width: clamp(220px, 24vw, 340px);
+    height: clamp(300px, 34vw, 460px);
+    flex: 0 0 auto;
+    overflow: hidden;
+    border: 8px solid rgba(255, 255, 255, 0.88);
+    border-radius: 8px;
+    background: #f8f9fb;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.24),
+      0 18px 42px rgba(0, 0, 0, 0.22);
+    transition:
+      transform 240ms ease,
+      box-shadow 240ms ease,
+      filter 240ms ease;
+  }
+
+  .film-frame img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 300ms ease;
+  }
+
+  .film-frame figcaption {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: grid;
+    gap: 0.35rem;
+    padding: 4rem 1rem 1rem;
+    color: #fff;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.76));
+  }
+
+  .film-frame span {
+    width: fit-content;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    padding: 0.18rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+  }
+
+  .film-frame strong {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  @keyframes film-roll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .film-stage:hover .film-track {
+      animation-play-state: paused;
+    }
+
+    .film-frame:hover {
+      z-index: 5;
+      transform: scale(1.07);
+      box-shadow:
+        0 0 0 1px rgba(168, 85, 247, 0.4),
+        0 24px 70px rgba(88, 28, 135, 0.26);
+    }
+
+    .film-frame:hover img {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .film-stage {
+      border-block-width: 12px;
+    }
+
+    .film-stage::before,
+    .film-stage::after {
+      height: 12px;
+    }
+
+    .film-track {
+      gap: 12px;
+      padding: 32px 12px;
+      animation-duration: 46s;
+    }
+
+    .film-frame {
+      width: min(72vw, 260px);
+      height: 330px;
+      border-width: 6px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .film-track {
+      animation: none;
+      overflow-x: auto;
+      width: 100%;
+    }
+  }
+</style>

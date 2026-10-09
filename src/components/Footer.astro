@@ -1,0 +1,18 @@
+---
+import { siteConfig } from '@/config/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-16 border-t border-black/10 bg-white/70 md:mt-24">
+  <div class="page-shell grid gap-8 py-10 md:grid-cols-[1.2fr_0.8fr]">
+    <div>
+      <p class="font-semibold">{siteConfig.brand.chineseName} / {siteConfig.brand.name}</p>
+      <p class="mt-2 max-w-xl text-sm text-ink-600">{siteConfig.brand.philosophy}</p>
+    </div>
+    <div class="flex flex-col gap-2 text-sm text-ink-600 md:items-end">
+      <a class="break-all hover:text-ink-950" href={siteConfig.nav.find((item) => item.label === '联系')?.href}>联系方式：{siteConfig.links.email}</a>
+      <a class="hover:text-ink-950" href={siteConfig.links.googlePlay} target="_blank" rel="noreferrer">Love Waits Google Play</a>
+      <p>© {year} LFY Portfolio. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

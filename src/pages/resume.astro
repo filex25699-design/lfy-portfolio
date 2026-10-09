@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { siteConfig } from '@/config/site';
+import { withBase } from '@/utils/paths';
+---
+
+<BaseLayout title="简历" description="LFY 在线简历与 PDF 下载入口。">
+  <section class="page-shell py-12 md:py-16">
+    <p class="eyebrow">Resume</p>
+    <h1 class="section-title mt-3">在线简历</h1>
+    <p class="mt-5 max-w-3xl text-base text-ink-600 sm:text-lg">
+      这里直接预览当前 PDF 简历，两页平铺展示。点击任意页面可打开大图查看，底部保留 PDF 下载。
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a class="button button-secondary" href={siteConfig.assets.resumePdf} target="_blank" rel="noreferrer">下载 PDF 简历</a>
+      <a class="button button-primary" href={withBase('/contact/')}>联系我</a>
+    </div>
+  </section>
+
+  <section class="page-shell grid gap-5 pb-12 lg:grid-cols-2">
+    {[1, 2].map((page) => (
+      <a
+        class="card block overflow-hidden bg-white p-2 sm:p-3"
+        href={withBase(`/images/resume/resume-page-${page}.png`)}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`打开简历第 ${page} 页大图`}
+      >
+        <img
+          src={withBase(`/images/resume/resume-page-${page}.png`)}
+          alt={`李锋游戏策划简历第 ${page} 页预览`}
+          class="w-full rounded-md border border-black/5 bg-white"
+          loading={page === 1 ? 'eager' : 'lazy'}
+        />
+      </a>
+    ))}
+  </section>
+
+  <section class="page-shell grid gap-4 pb-16 md:grid-cols-2">
+    <div class="rounded-lg border border-black/10 bg-white/75 p-4 sm:p-5">
+      <h2 class="text-xl font-bold">基本信息</h2>
+      <p class="mt-3 text-ink-600">正式简历姓名：{siteConfig.brand.resumeName}</p>
+      <p class="mt-2 text-ink-600">求职方向：游戏策划。邮箱：{siteConfig.links.email}。</p>
+    </div>
+    <div class="rounded-lg border border-black/10 bg-white/75 p-4 sm:p-5">
+      <h2 class="text-xl font-bold">代表项目</h2>
+      <p class="mt-3 text-ink-600">Love Waits: Tiles & Makeover 已上线项目，另包含 Sky Pirates、Tile Busters 团队活动分析等作品入口。</p>
+    </div>
+    <div class="rounded-lg border border-black/10 bg-white/75 p-4 sm:p-5">
+      <h2 class="text-xl font-bold">教育经历</h2>
+      <p class="mt-3 text-ink-600">湖南工学院，物联网工程本科，2021.09 - 2025.06。</p>
+    </div>
+    <div class="rounded-lg border border-black/10 bg-white/75 p-4 sm:p-5">
+      <h2 class="text-xl font-bold">能力结构</h2>
+      <p class="mt-3 text-ink-600">策划文档、活动系统、商业化系统、核心玩法体验、规则流程、AI 工具实践。</p>
+    </div>
+  </section>
+</BaseLayout>

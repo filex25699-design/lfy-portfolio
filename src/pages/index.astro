@@ -1,0 +1,77 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProfileAvatar from '@/components/ProfileAvatar.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import { siteConfig } from '@/config/site';
+import { featuredProjects, projects } from '@/data/projects';
+import { withBase } from '@/utils/paths';
+
+const commercialProjects = projects.filter((project) => project.category === 'commercial').slice(0, 4);
+const aiProjects = projects.filter((project) => project.category === 'ai').slice(0, 1);
+---
+
+<BaseLayout title="LFY Portfolio" description={siteConfig.brand.intro}>
+  <section class="page-shell grid items-center gap-10 py-12 md:py-16 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1fr_340px] lg:gap-12 lg:py-20">
+    <div>
+      <p class="eyebrow">Game Designer · AI Explorer · Creator</p>
+      <h1 class="mt-5 max-w-4xl text-[2.5rem] font-bold leading-[1.08] text-ink-950 sm:text-6xl lg:text-7xl lg:leading-[1.04]">
+        {siteConfig.brand.chineseName}，用产品思维设计游戏体验。
+      </h1>
+      <p class="mt-5 max-w-2xl text-base text-ink-600 sm:text-lg md:mt-6 md:text-xl">{siteConfig.brand.intro}</p>
+      <div class="mt-7 flex flex-wrap gap-2">
+        <span class="tag">游戏策划 Game Designer</span>
+        <span class="tag">AI 实践者 AI Explorer</span>
+        <span class="tag">内容创作者 Creator</span>
+      </div>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a class="button button-primary" href={withBase('/projects/')}>查看作品</a>
+        <a class="button button-secondary" href={withBase('/resume/')}>下载简历</a>
+        <a class="button button-ghost" href={withBase('/contact/')}>联系我</a>
+      </div>
+    </div>
+
+    <aside class="glass-panel rounded-[8px] p-5 sm:p-6">
+      <ProfileAvatar />
+      <div class="mt-8">
+        <p class="text-sm font-semibold text-accent-600">{siteConfig.brand.resumeName}</p>
+        <h2 class="mt-1 text-2xl font-bold">{siteConfig.brand.title}</h2>
+        <p class="mt-4 text-sm text-ink-600">{siteConfig.brand.philosophy}</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="page-shell py-12 md:py-16">
+    <div class="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end">
+      <div>
+        <p class="eyebrow">Selected Work</p>
+        <h2 class="section-title mt-3">已上线商业项目优先展示，补充真实可公开的设计过程。</h2>
+      </div>
+      <p class="text-base text-ink-600">
+        首版先呈现四组已确认上线的 Love Waits 项目，并为竞品研究、AI 实践和个人创作预留扩展入口。所有缺失材料保留 TODO，不写未经核对的成绩或数据。
+      </p>
+    </div>
+
+    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {commercialProjects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <section class="page-shell grid gap-5 py-12 md:py-16 lg:grid-cols-3">
+    <div class="lg:col-span-1">
+      <p class="eyebrow">Practice Map</p>
+      <h2 class="mt-3 text-3xl font-bold leading-tight">从商业策划到 AI 工具链。</h2>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+      {featuredProjects.filter((project) => project.category !== 'commercial').map((project) => <ProjectCard project={project} />)}
+      <a class="card flex min-h-64 flex-col justify-between p-5" href={withBase('/creative/')}>
+        <div>
+          <span class="tag">个人创作</span>
+          <h3 class="mt-5 text-xl font-bold">逢源诗集、硬笔书法与文章思考</h3>
+          <p class="mt-4 text-sm text-ink-600">首版保留创作入口与预览区，后续扩展文章详情、作品阅读和分类管理。</p>
+        </div>
+        <span class="text-sm font-bold text-accent-600">进入创作页</span>
+      </a>
+      {aiProjects.length === 0 && <p class="text-sm text-ink-600">TODO：补充 AI 实践项目。</p>}
+    </div>
+  </section>
+</BaseLayout>

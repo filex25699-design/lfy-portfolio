@@ -1,0 +1,101 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { siteConfig } from '@/config/site';
+import { categoryLabels, projects, type ProjectCategory } from '@/data/projects';
+import { withBase } from '@/utils/paths';
+
+const categories = Object.keys(categoryLabels) as ProjectCategory[];
+---
+
+<BaseLayout title="作品集" description="LFY 的商业游戏项目、竞品研究与 AI 实践项目。">
+  <section class="page-shell py-12 md:py-16">
+    <p class="eyebrow">Projects</p>
+    <h1 class="section-title mt-3">作品集</h1>
+    <p class="mt-5 max-w-3xl text-base text-ink-600 sm:text-lg">
+      这里按商业游戏项目、竞品研究与 AI 实践项目管理内容。商业项目仅展示可公开描述的策划工作，竞品研究会明确标注来源，开发中项目保留状态说明。
+    </p>
+  </section>
+
+  <section class="page-shell pb-10">
+    <a
+      class="card grid overflow-hidden lg:grid-cols-[360px_1fr]"
+      href={siteConfig.links.googlePlay}
+      target="_blank"
+      rel="noreferrer"
+      data-cursor-interactive
+    >
+      <div class="aspect-[4/3] max-h-96 overflow-hidden bg-ink-950 lg:aspect-auto">
+        <img
+          src={withBase('/images/projects/love-waits-google-play.jpg')}
+          alt="Love Waits Google Play 应用预览图"
+          class="h-full w-full object-cover object-top"
+          loading="eager"
+        />
+      </div>
+      <div class="flex flex-col justify-center p-5 sm:p-6 md:p-8">
+        <span class="tag w-fit">Google Play 已上线产品</span>
+        <h2 class="mt-5 text-2xl font-bold leading-tight sm:text-3xl">Love Waits: Tiles & Makeover</h2>
+        <p class="mt-4 max-w-2xl text-ink-600">
+          商业项目案例均围绕该已上线出海休闲游戏展开。点击可前往 Google Play 商店页查看公开产品信息与应用预览。
+        </p>
+        <span class="button button-primary mt-7 w-fit">查看 Google Play</span>
+      </div>
+    </a>
+  </section>
+
+  {
+    categories.map((category) => {
+      const items = projects.filter((project) => project.category === category);
+      return (
+        <section class="page-shell py-7 md:py-8">
+          <div class="mb-5 flex items-end justify-between gap-4">
+            <h2 class="text-2xl font-bold">{categoryLabels[category]}</h2>
+            <span class="text-sm font-semibold text-ink-500">{items.length} 项</span>
+          </div>
+          <div class="grid gap-4">
+            {items.map((project) => (
+              <article class="card grid overflow-hidden lg:grid-cols-[300px_1fr]">
+                <a
+                  href={withBase(`/projects/${project.slug}/`)}
+                  class="block aspect-[4/3] overflow-hidden bg-ink-50 sm:min-h-64 sm:aspect-auto"
+                  aria-label={`查看 ${project.title}`}
+                >
+                  <img
+                    src={project.previewImage ?? withBase('/images/projects/love-waits-google-play.jpg')}
+                    alt={`${project.title}预览图`}
+                    class="h-full w-full object-cover object-top transition duration-300 hover:scale-[1.02]"
+                    loading="lazy"
+                    onerror="this.style.display='none'"
+                  />
+                </a>
+                <div class="flex flex-col p-5 md:p-6">
+                  <div class="flex flex-wrap gap-2">
+                    <span class="tag">{categoryLabels[project.category]}</span>
+                    <span class="tag">{project.status}</span>
+                  </div>
+                  <h3 class="mt-5 text-xl font-bold leading-tight sm:text-2xl">{project.title}</h3>
+                  <p class="mt-1 font-medium text-ink-600">{project.subtitle}</p>
+                  <p class="mt-4 text-ink-600">{project.summary}</p>
+                  <div class="mt-5 flex flex-wrap gap-2">
+                    {project.tags.map((tag) => <span class="rounded-full bg-ink-50 px-2.5 py-1 text-xs font-semibold text-ink-600">{tag}</span>)}
+                  </div>
+                  <div class="mt-6 flex flex-wrap gap-3">
+                    <a class="button button-primary" href={withBase(`/projects/${project.slug}/`)}>查看详情</a>
+                    {project.pdfUrl && (
+                      <a class="button button-secondary" href={project.pdfUrl} target="_blank" rel="noreferrer">预览 PDF</a>
+                    )}
+                    {project.externalUrl && (
+                      <a class="button button-ghost" href={project.externalUrl} target="_blank" rel="noreferrer">
+                        {project.externalLabel ?? '外部链接'}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      );
+    })
+  }
+</BaseLayout>
