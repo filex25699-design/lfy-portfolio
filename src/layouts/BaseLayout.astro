@@ -12,11 +12,11 @@ interface Props {
 }
 
 const {
-  title = `${siteConfig.brand.name} Portfolio`,
+  title = siteConfig.brand.name,
   description = siteConfig.brand.intro
 } = Astro.props;
 
-const pageTitle = title === `${siteConfig.brand.name} Portfolio` ? title : `${title} | ${siteConfig.brand.name}`;
+const pageTitle = title === siteConfig.brand.name ? title : `${title} | ${siteConfig.brand.name}`;
 const ogImage = Astro.site ? new URL(siteConfig.assets.avatar, Astro.site).href : siteConfig.assets.avatar;
 ---
 
