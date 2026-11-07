@@ -15,11 +15,11 @@ import { skillGroups } from '@/data/skills';
     <div>
       <p class="text-lg text-ink-700 sm:text-xl">{siteConfig.brand.intro}</p>
       <div class="mt-10 grid gap-4 md:grid-cols-2">
-        <section class="rounded-lg border border-black/10 bg-white/75 p-5">
+        <section class="card interactive-surface rounded-lg p-5" data-interactive-surface>
           <h2 class="text-xl font-bold">教育背景</h2>
           <p class="mt-3 text-ink-600">湖南工学院，物联网工程本科，2021.09 - 2025.06。主修数据结构、计算机网络、操作系统、数据库等课程。</p>
         </section>
-        <section class="rounded-lg border border-black/10 bg-white/75 p-5">
+        <section class="card interactive-surface rounded-lg p-5" data-interactive-surface>
           <h2 class="text-xl font-bold">工作经历</h2>
           <p class="mt-3 text-ink-600">游戏策划方向，参与出海休闲游戏项目，覆盖策划文档、活动系统、商业化系统、体验优化、资源管理与 AI 工具实践等工作。</p>
         </section>
@@ -32,7 +32,7 @@ import { skillGroups } from '@/data/skills';
     <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {
         skillGroups.map((group) => (
-          <section class="card p-5">
+          <section class="card interactive-surface p-5" data-interactive-surface>
             <h3 class="font-bold">{group.title}</h3>
             <div class="mt-4 flex flex-wrap gap-2">
               {group.items.map((item) => <span class="tag">{item}</span>)}

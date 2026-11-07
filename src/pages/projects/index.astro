@@ -18,11 +18,12 @@ const categories = Object.keys(categoryLabels) as ProjectCategory[];
 
   <section class="page-shell pb-10">
     <a
-      class="card grid overflow-hidden lg:grid-cols-[360px_1fr]"
+      class="card interactive-surface grid overflow-hidden lg:grid-cols-[360px_1fr]"
       href={siteConfig.links.googlePlay}
       target="_blank"
       rel="noreferrer"
       data-cursor-interactive
+      data-interactive-surface
     >
       <div class="aspect-[4/3] max-h-96 overflow-hidden bg-ink-950 lg:aspect-auto">
         <img
@@ -54,7 +55,7 @@ const categories = Object.keys(categoryLabels) as ProjectCategory[];
           </div>
           <div class="grid gap-4">
             {items.map((project) => (
-              <article class="card grid overflow-hidden lg:grid-cols-[300px_1fr]">
+              <article class="card interactive-surface grid overflow-hidden lg:grid-cols-[300px_1fr]" data-interactive-surface>
                 <a
                   href={withBase(`/projects/${project.slug}/`)}
                   class="block aspect-[4/3] overflow-hidden bg-ink-50 sm:min-h-64 sm:aspect-auto"

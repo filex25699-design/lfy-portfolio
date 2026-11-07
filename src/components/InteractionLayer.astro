@@ -1,0 +1,142 @@
+<div class="pointer-light" aria-hidden="true"></div>
+<canvas class="pointer-particles" aria-hidden="true"></canvas>
+
+<script is:inline>
+  (() => {
+    const finePointer = window.matchMedia('(pointer: fine)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const light = document.querySelector('.pointer-light');
+    const canvas = document.querySelector('.pointer-particles');
+    const context = canvas?.getContext('2d');
+    const particles = [];
+    let animationFrame = 0;
+    let lastSpawnX = -100;
+    let lastSpawnY = -100;
+
+    const resizeCanvas = () => {
+      if (!canvas || !context) return;
+      const density = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.round(window.innerWidth * density);
+      canvas.height = Math.round(window.innerHeight * density);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      context.setTransform(density, 0, 0, density, 0, 0);
+    };
+
+    const drawParticles = () => {
+      if (!context || !canvas) return;
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (let index = particles.length - 1; index >= 0; index -= 1) {
+        const particle = particles[index];
+        particle.life -= 0.035;
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vy -= 0.003;
+
+        if (particle.life <= 0) {
+          particles.splice(index, 1);
+          continue;
+        }
+
+        const alpha = Math.min(particle.life * 0.55, 0.32);
+        const gradient = context.createRadialGradient(
+          particle.x,
+          particle.y,
+          0,
+          particle.x,
+          particle.y,
+          particle.size * 3.4
+        );
+        gradient.addColorStop(0, `rgba(255,255,255,${alpha + 0.18})`);
+        gradient.addColorStop(0.28, `rgba(137,118,255,${alpha})`);
+        gradient.addColorStop(1, 'rgba(81,67,255,0)');
+        context.fillStyle = gradient;
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.size * 3.4, 0, Math.PI * 2);
+        context.fill();
+      }
+
+      if (particles.length > 0) {
+        animationFrame = requestAnimationFrame(drawParticles);
+      } else {
+        animationFrame = 0;
+      }
+    };
+
+    const spawnParticle = (x, y) => {
+      particles.push({
+        x: x + (Math.random() - 0.5) * 7,
+        y: y + (Math.random() - 0.5) * 7,
+        vx: (Math.random() - 0.5) * 0.28,
+        vy: (Math.random() - 0.5) * 0.22,
+        size: 0.8 + Math.random() * 1.25,
+        life: 0.65 + Math.random() * 0.35
+      });
+      if (!animationFrame) animationFrame = requestAnimationFrame(drawParticles);
+    };
+
+    const bindSurface = (surface) => {
+      if (surface.dataset.interactionReady === 'true') return;
+      surface.dataset.interactionReady = 'true';
+
+      const reset = () => {
+        surface.style.setProperty('--pointer-x', '50%');
+        surface.style.setProperty('--pointer-y', '50%');
+        surface.style.setProperty('--tilt-x', '0deg');
+        surface.style.setProperty('--tilt-y', '0deg');
+        surface.style.setProperty('--lift', '0px');
+      };
+
+      surface.addEventListener('pointerenter', () => {
+        if (!finePointer.matches || reducedMotion.matches) return;
+        surface.style.setProperty('--lift', '-5px');
+      });
+
+      surface.addEventListener('pointermove', (event) => {
+        if (!finePointer.matches || reducedMotion.matches) return;
+        const rect = surface.getBoundingClientRect();
+        const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
+        const y = Math.min(Math.max(event.clientY - rect.top, 0), rect.height);
+        const ratioX = x / rect.width;
+        const ratioY = y / rect.height;
+
+        surface.style.setProperty('--pointer-x', `${ratioX * 100}%`);
+        surface.style.setProperty('--pointer-y', `${ratioY * 100}%`);
+        surface.style.setProperty('--tilt-x', `${(0.5 - ratioY) * 2.4}deg`);
+        surface.style.setProperty('--tilt-y', `${(ratioX - 0.5) * 2.4}deg`);
+      });
+
+      surface.addEventListener('pointerleave', reset);
+      surface.addEventListener('blur', reset, true);
+      reset();
+    };
+
+    const init = () => document.querySelectorAll('[data-interactive-surface]').forEach(bindSurface);
+    const onPointerMove = (event) => {
+      if (!finePointer.matches || reducedMotion.matches || window.innerWidth < 640 || !light) return;
+      const target = event.target instanceof Element
+        ? event.target.closest('[data-interactive-surface], a, button, summary, [role="button"]')
+        : null;
+
+      light.style.transform = `translate3d(${event.clientX - 70}px, ${event.clientY - 70}px, 0)`;
+      light.classList.toggle('is-visible', Boolean(target));
+
+      if (!target) return;
+      const distance = Math.hypot(event.clientX - lastSpawnX, event.clientY - lastSpawnY);
+      if (distance > 13) {
+        spawnParticle(event.clientX, event.clientY);
+        if (Math.random() > 0.45) spawnParticle(event.clientX, event.clientY);
+        lastSpawnX = event.clientX;
+        lastSpawnY = event.clientY;
+      }
+    };
+
+    document.addEventListener('astro:page-load', init);
+    document.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.addEventListener('pointerleave', () => light?.classList.remove('is-visible'));
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    resizeCanvas();
+    init();
+  })();
+</script>

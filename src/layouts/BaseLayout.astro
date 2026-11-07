@@ -1,6 +1,7 @@
 ---
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import InteractionLayer from '@/components/InteractionLayer.astro';
 import { siteConfig } from '@/config/site';
 import { withBase } from '@/utils/paths';
 import '@/styles/global.css';
@@ -38,5 +39,6 @@ const ogImage = Astro.site ? new URL(siteConfig.assets.avatar, Astro.site).href 
       <slot />
     </main>
     <Footer />
+    <InteractionLayer />
   </body>
 </html>

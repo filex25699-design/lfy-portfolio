@@ -11,7 +11,7 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
 ---
 
 <BaseLayout title="LFY Portfolio" description={siteConfig.brand.intro}>
-  <section class="page-shell grid items-center gap-10 py-12 md:py-16 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1fr_340px] lg:gap-12 lg:py-20">
+  <section class="page-shell hero-section grid items-center gap-10 py-12 md:py-16 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1fr_360px] lg:gap-14 lg:py-20">
     <div>
       <p class="eyebrow">Game Designer · AI Explorer · Creator</p>
       <h1 class="mt-5 max-w-4xl text-[2.5rem] font-bold leading-[1.08] text-ink-950 sm:text-6xl lg:text-7xl lg:leading-[1.04]">
@@ -28,9 +28,24 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
         <a class="button button-secondary" href={withBase('/resume/')}>下载简历</a>
         <a class="button button-ghost" href={withBase('/contact/')}>联系我</a>
       </div>
+      <dl class="hero-facts mt-10 grid max-w-2xl grid-cols-3 border-y border-black/10 py-4">
+        <div>
+          <dt>上线实践</dt>
+          <dd>4 组项目</dd>
+        </div>
+        <div>
+          <dt>产品经历</dt>
+          <dd>出海休闲游戏</dd>
+        </div>
+        <div>
+          <dt>延展方向</dt>
+          <dd>AI × 创作</dd>
+        </div>
+      </dl>
     </div>
 
-    <aside class="glass-panel rounded-[8px] p-5 sm:p-6">
+    <aside class="glass-panel profile-panel interactive-surface rounded-[14px] p-5 sm:p-6" data-interactive-surface>
+      <div class="profile-panel__topline"><span></span><span>LFY / 01</span></div>
       <ProfileAvatar />
       <div class="mt-8">
         <p class="text-sm font-semibold text-accent-600">{siteConfig.brand.resumeName}</p>
@@ -52,7 +67,7 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
     </div>
 
     <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {commercialProjects.map((project) => <ProjectCard project={project} />)}
+      {commercialProjects.map((project, index) => <ProjectCard project={project} index={index} />)}
     </div>
   </section>
 
@@ -62,14 +77,14 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
       <h2 class="mt-3 text-3xl font-bold leading-tight">从商业策划到 AI 工具链。</h2>
     </div>
     <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
-      {featuredProjects.filter((project) => project.category !== 'commercial').map((project) => <ProjectCard project={project} />)}
-      <a class="card flex min-h-64 flex-col justify-between p-5" href={withBase('/creative/')}>
+      {featuredProjects.filter((project) => project.category !== 'commercial').map((project, index) => <ProjectCard project={project} index={index} />)}
+      <a class="card interactive-surface group flex min-h-64 flex-col justify-between p-5" data-interactive-surface href={withBase('/creative/')}>
         <div>
           <span class="tag">个人创作</span>
           <h3 class="mt-5 text-xl font-bold">逢源诗集、硬笔书法与文章思考</h3>
           <p class="mt-4 text-sm text-ink-600">首版保留创作入口与预览区，后续扩展文章详情、作品阅读和分类管理。</p>
         </div>
-        <span class="text-sm font-bold text-accent-600">进入创作页</span>
+        <span class="project-card__action text-sm font-bold text-accent-600">进入创作页 <span aria-hidden="true">→</span></span>
       </a>
       {aiProjects.length === 0 && <p class="text-sm text-ink-600">TODO：补充 AI 实践项目。</p>}
     </div>

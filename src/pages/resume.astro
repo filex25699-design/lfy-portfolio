@@ -20,7 +20,8 @@ import { withBase } from '@/utils/paths';
   <section class="page-shell grid gap-5 pb-12 lg:grid-cols-2">
     {[1, 2].map((page) => (
       <a
-        class="card block overflow-hidden bg-white p-2 sm:p-3"
+        class="card interactive-surface block overflow-hidden bg-white p-2 sm:p-3"
+        data-interactive-surface
         href={withBase(`/images/resume/resume-page-${page}.png`)}
         target="_blank"
         rel="noreferrer"
