@@ -4,6 +4,9 @@ import ProfileAvatar from '@/components/ProfileAvatar.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import { siteConfig } from '@/config/site';
 import { featuredProjects, projects } from '@/data/projects';
+import { skillGroups } from '@/data/skills';
+import { creativeFeatures, creativeGallery } from '@/data/creative';
+import { contactItems } from '@/data/contact';
 import { withBase } from '@/utils/paths';
 
 const commercialProjects = projects.filter((project) => project.category === 'commercial').slice(0, 4);
@@ -11,7 +14,7 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
 ---
 
 <BaseLayout title="LFY Portfolio" description={siteConfig.brand.intro}>
-  <section class="page-shell hero-section grid items-center gap-10 py-12 md:py-16 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1fr_360px] lg:gap-14 lg:py-20">
+  <section id="home" data-nav-section class="scroll-section page-shell hero-section grid items-center gap-10 py-12 md:py-16 lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[1fr_360px] lg:gap-14 lg:py-20">
     <div>
       <p class="eyebrow">Game Designer · AI Explorer · Creator</p>
       <h1 class="mt-5 max-w-4xl text-[2.5rem] font-bold leading-[1.08] text-ink-950 sm:text-6xl lg:text-7xl lg:leading-[1.04]">
@@ -24,9 +27,9 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
         <span class="tag">内容创作者 Creator</span>
       </div>
       <div class="mt-9 flex flex-wrap gap-3">
-        <a class="button button-primary" href={withBase('/projects/')}>查看作品</a>
-        <a class="button button-secondary" href={withBase('/resume/')}>下载简历</a>
-        <a class="button button-ghost" href={withBase('/contact/')}>联系我</a>
+        <a class="button button-primary" href="#projects">查看作品</a>
+        <a class="button button-secondary" href="#resume">查看简历</a>
+        <a class="button button-ghost" href="#contact">联系我</a>
       </div>
       <dl class="hero-facts mt-10 grid max-w-2xl grid-cols-3 border-y border-black/10 py-4">
         <div>
@@ -55,7 +58,28 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
     </aside>
   </section>
 
-  <section class="page-shell py-12 md:py-16">
+  <section id="about" data-nav-section class="scroll-section border-y border-black/10 bg-white/55 py-14 md:py-20">
+    <div class="page-shell grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+      <div class="lg:sticky lg:top-24">
+        <p class="eyebrow">About</p>
+        <h2 class="section-title mt-3">策划经验之外，也保留技术理解与创作表达。</h2>
+        <p class="mt-6 max-w-xl text-base text-ink-600 sm:text-lg">{siteConfig.brand.intro}</p>
+        <a class="button button-secondary mt-7" href={withBase('/about/')}>查看完整经历</a>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        {skillGroups.map((group) => (
+          <article class="card interactive-surface p-5 sm:p-6" data-interactive-surface>
+            <h3 class="text-lg font-bold">{group.title}</h3>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {group.items.map((item) => <span class="tag">{item}</span>)}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" data-nav-section class="scroll-section page-shell py-14 md:py-20">
     <div class="grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end">
       <div>
         <p class="eyebrow">Selected Work</p>
@@ -71,7 +95,7 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
     </div>
   </section>
 
-  <section class="page-shell grid gap-5 py-12 md:py-16 lg:grid-cols-3">
+  <section class="page-shell grid gap-5 pb-14 pt-4 md:pb-20 lg:grid-cols-3">
     <div class="lg:col-span-1">
       <p class="eyebrow">Practice Map</p>
       <h2 class="mt-3 text-3xl font-bold leading-tight">从商业策划到 AI 工具链。</h2>
@@ -87,6 +111,87 @@ const aiProjects = projects.filter((project) => project.category === 'ai').slice
         <span class="project-card__action text-sm font-bold text-accent-600">进入创作页 <span aria-hidden="true">→</span></span>
       </a>
       {aiProjects.length === 0 && <p class="text-sm text-ink-600">TODO：补充 AI 实践项目。</p>}
+    </div>
+  </section>
+
+  <section id="resume" data-nav-section class="scroll-section border-y border-black/10 bg-ink-950 py-14 text-white md:py-20">
+    <div class="page-shell grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
+      <div>
+        <p class="text-sm font-semibold text-blue-300">Resume</p>
+        <h2 class="mt-3 text-4xl font-bold leading-tight sm:text-5xl">两页简历，集中呈现经历、能力与代表项目。</h2>
+        <p class="mt-5 max-w-xl text-white/65">可在线查看两页预览，也可以下载 PDF 用于离线阅读和面试沟通。</p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a class="button bg-white text-ink-950" href={siteConfig.assets.resumePdf} target="_blank" rel="noreferrer">下载 PDF</a>
+          <a class="button border border-white/20 text-white" href={withBase('/resume/')}>打开简历页</a>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 sm:gap-5">
+        {[1, 2].map((page) => (
+          <a
+            class="resume-sheet interactive-surface block overflow-hidden rounded-lg bg-white p-1.5 shadow-2xl sm:p-2"
+            data-interactive-surface
+            href={withBase(`/images/resume/resume-page-${page}.png`)}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`放大查看简历第 ${page} 页`}
+          >
+            <img src={withBase(`/images/resume/resume-page-${page}.png`)} alt={`李锋简历第 ${page} 页`} class="w-full rounded-md" loading="lazy" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="creative" data-nav-section class="scroll-section page-shell py-14 md:py-20">
+    <div class="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+      <div>
+        <p class="eyebrow">Creative</p>
+        <h2 class="section-title mt-3">创作不是简历的附录，而是观察力的另一种证据。</h2>
+      </div>
+      <p class="max-w-2xl text-ink-600">诗歌、音乐、书法和运动记录，补充展示长期练习、文字表达与对节奏的感受。</p>
+    </div>
+    <div class="creative-strip mt-10 grid gap-4 sm:grid-cols-3">
+      {creativeGallery.slice(0, 3).map((item, index) => (
+        <figure class:list={['creative-tile interactive-surface overflow-hidden rounded-lg', index === 1 && 'sm:translate-y-8']} data-interactive-surface>
+          <img src={item.src} alt={item.alt} class="h-full min-h-72 w-full object-cover sm:min-h-96" loading="lazy" />
+          <figcaption class="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-black/80 to-transparent p-5 pt-16 text-white">
+            <span class="text-xs text-white/70">{item.category}</span>
+            <strong class="mt-1 block">{item.caption}</strong>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+    <div class="mt-12 flex flex-wrap items-center gap-3">
+      <a class="button button-primary" href={withBase('/creative/')}>进入兴趣创作页</a>
+      {creativeFeatures[0]?.href && <a class="button button-secondary" href={creativeFeatures[0].href} target="_blank" rel="noreferrer">网易云音乐人主页</a>}
+    </div>
+  </section>
+
+  <section id="contact" data-nav-section class="scroll-section border-t border-black/10 bg-white/65 py-14 md:py-20">
+    <div class="page-shell">
+      <div class="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 class="section-title mt-3">如果你对我的项目感兴趣，欢迎继续交流。</h2>
+        </div>
+        <p class="max-w-2xl text-ink-600">求职沟通建议优先使用邮箱；微信和抖音二维码保留在统一资源路径，后续可以随时替换。</p>
+      </div>
+      <div class="mt-10 grid gap-4 md:grid-cols-3">
+        {contactItems.map((item) => (
+          <article class="card interactive-surface flex flex-col p-5" data-interactive-surface>
+            <span class="tag w-fit">{item.type === 'email' ? '邮箱' : item.label}</span>
+            <h3 class="mt-5 text-xl font-bold">{item.label}</h3>
+            <p class="mt-2 break-all text-sm font-semibold text-ink-700">{item.value}</p>
+            <p class="mt-3 text-sm text-ink-600">{item.description}</p>
+            {item.qrImage && (
+              <div class="mt-5 flex aspect-square items-center justify-center rounded-lg border border-black/10 bg-white p-3">
+                <img src={item.qrImage} alt={`${item.label}二维码`} class="h-full w-full rounded-md object-contain" loading="lazy" />
+              </div>
+            )}
+            {item.href && <a class="button button-primary mt-6" href={item.href}>发送邮件</a>}
+          </article>
+        ))}
+      </div>
     </div>
   </section>
 </BaseLayout>

@@ -4,26 +4,37 @@ import { withBase } from '@/utils/paths';
 
 const pathname = Astro.url.pathname;
 const homeHref = withBase('/');
+const sectionIds = ['home', 'about', 'projects', 'resume', 'creative', 'contact'] as const;
+const navItems = siteConfig.nav.map((item, index) => ({
+  ...item,
+  sectionId: sectionIds[index],
+  sectionHref: withBase(`/#${sectionIds[index]}`)
+}));
+const isHomePage = pathname === homeHref;
 ---
 
-<header class="sticky top-0 z-50 border-b border-black/5 bg-white/90 backdrop-blur-xl">
-  <nav class="page-shell flex h-16 items-center justify-between gap-6" aria-label="主导航">
-    <a href={withBase('/')} class="brand-link flex items-center gap-2 font-semibold" aria-label="LFY 首页">
-      <span class="grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-black/10 bg-white shadow-line">
-        <img src={siteConfig.assets.avatar} alt={`${siteConfig.brand.chineseName}头像`} class="h-full w-full object-cover" />
-      </span>
-      <span class="hidden text-sm text-ink-800 sm:inline">{siteConfig.brand.chineseName}</span>
-    </a>
+<header class="fixed inset-x-0 top-0 z-50 border-b border-black/5 bg-white/90 backdrop-blur-xl">
+  <nav class="page-shell flex h-16 items-center justify-between gap-3 lg:gap-6" aria-label="主导航">
+    <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+      <a href={withBase('/#home')} class="brand-link flex items-center gap-2 font-semibold" aria-label="LFY 首页">
+        <span class="grid h-9 w-9 place-items-center overflow-hidden rounded-full border border-black/10 bg-white shadow-line">
+          <img src={siteConfig.assets.avatar} alt={`${siteConfig.brand.chineseName}头像`} class="h-full w-full object-cover" />
+        </span>
+        <span class="hidden text-sm text-ink-800 sm:inline">{siteConfig.brand.chineseName}</span>
+      </a>
+      <a href={withBase('/#contact')} class="header-contact button button-primary min-h-9 px-3 text-xs sm:min-h-10 sm:px-4 sm:text-sm">联系我</a>
+    </div>
 
-    <div class="hidden items-center gap-1 md:flex">
+    <div class="hidden items-center gap-0 lg:flex xl:gap-1">
       {
-        siteConfig.nav.map((item) => {
-          const active = item.href === homeHref ? pathname === homeHref : pathname.startsWith(item.href);
+        navItems.map((item) => {
+          const active = isHomePage ? item.sectionId === 'home' : pathname.startsWith(item.href);
           return (
             <a
-              href={item.href}
+              href={item.sectionHref}
+              data-section-link={item.sectionId}
               class:list={[
-                'nav-link rounded-full px-3 py-2 text-sm font-medium',
+                'nav-link rounded-full px-2.5 py-2 text-sm font-medium xl:px-3',
                 active ? 'is-active text-ink-950' : 'text-ink-600'
               ]}
               aria-current={active ? 'page' : undefined}
@@ -35,17 +46,19 @@ const homeHref = withBase('/');
       }
     </div>
 
-    <a href={withBase('/contact/')} class="button button-primary hidden min-h-10 px-4 text-sm sm:inline-flex">联系我</a>
-
-    <details class="relative md:hidden">
+    <details class="relative lg:hidden" data-mobile-menu>
       <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-black/10 bg-white text-xl text-ink-950" aria-label="打开导航菜单">
         <span class="sr-only">打开导航</span>
         <span aria-hidden="true">☰</span>
       </summary>
       <div class="absolute right-0 mt-3 w-48 rounded-lg border border-black/10 bg-white p-2 shadow-soft">
         {
-          siteConfig.nav.map((item) => (
-            <a href={item.href} class="block min-h-11 rounded-md px-3 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50">
+          navItems.map((item) => (
+            <a
+              href={item.sectionHref}
+              data-section-link={item.sectionId}
+              class="mobile-nav-link block min-h-11 rounded-md px-3 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
+            >
               {item.label}
             </a>
           ))
@@ -54,3 +67,83 @@ const homeHref = withBase('/');
     </details>
   </nav>
 </header>
+
+<script is:inline>
+  (() => {
+    const initScrollNavigation = () => {
+      const header = document.querySelector('header');
+      const sections = [...document.querySelectorAll('[data-nav-section]')];
+      const links = [...document.querySelectorAll('[data-section-link]')];
+      const mobileMenu = document.querySelector('[data-mobile-menu]');
+      let ticking = false;
+
+      const setActive = (id) => {
+        links.forEach((link) => {
+          const active = link.dataset.sectionLink === id;
+          link.classList.toggle('is-active', active);
+          link.classList.toggle('text-ink-950', active);
+          link.classList.toggle('text-ink-600', !active);
+          if (active) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      };
+
+      const updateActiveSection = () => {
+        ticking = false;
+        if (!sections.length) return;
+        const marker = window.scrollY + (header?.offsetHeight ?? 64) + Math.min(window.innerHeight * 0.28, 220);
+        let active = sections[0].id;
+
+        sections.forEach((section) => {
+          if (section.offsetTop <= marker) active = section.id;
+        });
+
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+          active = sections[sections.length - 1].id;
+        }
+        setActive(active);
+      };
+
+      const requestUpdate = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(updateActiveSection);
+      };
+
+      if (sections.length) {
+        window.addEventListener('scroll', requestUpdate, { passive: true });
+        window.addEventListener('resize', requestUpdate, { passive: true });
+        window.addEventListener('hashchange', requestUpdate);
+        requestUpdate();
+
+        const alignInitialHash = () => {
+          if (!window.location.hash) return;
+          const target = document.querySelector(window.location.hash);
+          if (!target?.matches('[data-nav-section]')) return;
+          const root = document.documentElement;
+          const previousBehavior = root.style.scrollBehavior;
+          root.style.scrollBehavior = 'auto';
+          window.scrollTo(0, target.offsetTop - (header?.offsetHeight ?? 64));
+          root.style.scrollBehavior = previousBehavior;
+          requestUpdate();
+        };
+
+        if (document.readyState === 'complete') {
+          requestAnimationFrame(alignInitialHash);
+        } else {
+          window.addEventListener('load', () => requestAnimationFrame(alignInitialHash), { once: true });
+        }
+      }
+
+      links.forEach((link) => link.addEventListener('click', () => {
+        if (mobileMenu instanceof HTMLDetailsElement) mobileMenu.open = false;
+      }));
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initScrollNavigation, { once: true });
+    } else {
+      initScrollNavigation();
+    }
+  })();
+</script>
